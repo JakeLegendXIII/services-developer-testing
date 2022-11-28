@@ -9,7 +9,7 @@ public class AccountWithdrawals
     public void WithdrawingMoneyDecreasesTheBalance()
     {
         // Given
-        var account = new BankAccount();
+        var account = new BankAccount(new Mock<INotifyOfOverdrafts>().Object, new Mock<ILogger>().Object);
         var openingBalance = account.GetBalance();
         var amountToWithdraw = 100M;
 
@@ -20,15 +20,50 @@ public class AccountWithdrawals
         Assert.Equal(openingBalance - amountToWithdraw, account.GetBalance());
     }
 
-    [Fact(Skip = "Working on it")]
+    [Fact]
     public void WithdrawingAllMoney()
     {
+        var account = new BankAccount(new Mock<INotifyOfOverdrafts>().Object, new Mock<ILogger>().Object);
+        var openingBalance = account.GetBalance();
+        var amountToWithdraw = openingBalance;
 
+        account.Withdraw(amountToWithdraw);
+
+        Assert.Equal(0, account.GetBalance());
     }
 
-    [Fact(Skip = "Working on it")]
-    public void Overdraft()
+    [Fact]
+    public void OverdraftDoesNotDecreaseBalance()
     {
+        var account = new BankAccount(new Mock<INotifyOfOverdrafts>().Object, new Mock<ILogger>().Object);
+        var openingBalance = account.GetBalance();
+        var amountToWithdraw = openingBalance + 1;
 
+        try
+        {
+            account.Withdraw(amountToWithdraw);
+        }
+        catch (AccountOverdraftException ex)
+        { 
+            //ignored for this test 
+        }
+        finally
+        {
+            Assert.Equal(openingBalance, account.GetBalance());
+        }        
+    }
+
+
+    [Fact]
+    public void OverdraftThrowsAnException()
+    {
+        var account = new BankAccount(new Mock<INotifyOfOverdrafts>().Object, new Mock<ILogger>().Object);
+        var openingBalance = account.GetBalance();
+        var amountToWithdraw = openingBalance + 1;        
+
+        Assert.Throws<AccountOverdraftException>(() =>
+        {
+            account.Withdraw(amountToWithdraw);
+        });
     }
 }
