@@ -6,10 +6,10 @@ using CoursesApi.Models;
 
 namespace CoursesApi.IntegrationTests.CoursesResource;
 
-public class GettingCourses : IClassFixture<CoursesResourceFicture>
+public class GettingCourses : IClassFixture<CoursesResourceFixture>
 {
     private readonly IAlbaHost _host;
-    public GettingCourses(CoursesResourceFicture fixture)
+    public GettingCourses(CoursesResourceFixture fixture)
     {
         _host = fixture.AlbaHost;
     }

@@ -3,7 +3,7 @@
 #nullable disable
 
 namespace CoursesApi.Migrations
-{
+{    
     public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
