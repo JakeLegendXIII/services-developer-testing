@@ -20,13 +20,13 @@ public class GettingCourses : IClassFixture<CoursesResourceFicture>
         // when I do a GET /courses
         // I get a 200 OK Status Response
 
-        var resposne = await _host.Scenario(api =>
+        var response = await _host.Scenario(api =>
          {
              api.Get.Url("/courses");
              api.StatusCodeShouldBeOk();
          });
 
-        var entity = await resposne.ReadAsJsonAsync<CoursesResponseModel>();
+        var entity = await response.ReadAsJsonAsync<CoursesResponseModel>();
 
         entity = entity is not null ? entity : throw new ArgumentNullException(nameof(entity));
 
