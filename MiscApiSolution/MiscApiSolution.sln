@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiscApi", "MiscApi\MiscApi.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiscApi.UnitTests", "MiscApi.UnitTests\MiscApi.UnitTests.csproj", "{1ADEA4B7-6470-4BD3-BA0C-48E432F0F056}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{54B1AA50-2885-49D4-89AB-80B4B4B26300}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1ADEA4B7-6470-4BD3-BA0C-48E432F0F056}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADEA4B7-6470-4BD3-BA0C-48E432F0F056}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADEA4B7-6470-4BD3-BA0C-48E432F0F056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54B1AA50-2885-49D4-89AB-80B4B4B26300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54B1AA50-2885-49D4-89AB-80B4B4B26300}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54B1AA50-2885-49D4-89AB-80B4B4B26300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54B1AA50-2885-49D4-89AB-80B4B4B26300}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
