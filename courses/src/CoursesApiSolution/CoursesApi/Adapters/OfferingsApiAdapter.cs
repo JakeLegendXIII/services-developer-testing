@@ -11,7 +11,7 @@ public class OfferingsApiAdapter
 
     public async Task<Offerings?> GetOfferingsForCourseAsync(int courseId)
     {
-        var response =await _client.GetAsync($"{courseId}");
+        var response = await _client.GetAsync($"{courseId}");
 
         response.EnsureSuccessStatusCode(); // anything other than 200-299 
 

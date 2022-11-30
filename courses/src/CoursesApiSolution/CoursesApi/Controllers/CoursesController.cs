@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using System.Reflection.Metadata.Ecma335;
 
 namespace CoursesApi.Controllers;
@@ -67,18 +68,30 @@ public class CoursesController : ControllerBase
 
     }
 
-    //[HttpGet("/courses/{id:int}/offerings")]
+    [HttpGet("/courses/{id:int}/offerings")]
 
-    //[ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
-    //public async Task<ActionResult> GetOfferingsForCourse(int id)
-    //{
-    //    // TODO talk about a 404 here.
-    //    // check to see if that course exists, if it doesn, return a 404.
-    //    var data = await _offerings.GetOfferingsForCourse(id);
-    //    return Ok(new { Offerings = data });
-    //}
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+    public async Task<ActionResult> GetOfferingsForCourse(int id, CancellationToken token)
+    {
+        // TODO talk about a 404 here.
+        // check to see if that course exists, if it doesn, return a 404.
+        try
+        {
+            var data = await _offerings.GetOfferingsForCourse(id, token);
+            // Danged Tri-state logic!
+            return data is not null ? Ok(new { Data = data }) : NotFound();
 
-    [HttpGet("/courses/{id:int}", Name ="course-details")]
+
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        {
+
+
+            return StatusCode(502, "The offerings API is down");
+        }
+    }
+
+    [HttpGet("/courses/{id:int}", Name = "course-details")]
     public async Task<ActionResult<CourseItemDetailsResponse>> GetCourseById(int id, CancellationToken token)
     {
         CourseItemDetailsResponse? response = await _catalog.GetCourseByIdAsync(id, token);

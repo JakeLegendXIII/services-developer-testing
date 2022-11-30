@@ -1,4 +1,5 @@
 ﻿
+
 using Alba;
 
 using CoursesApi.Adapters;
@@ -8,33 +9,46 @@ using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using WireMock.Server;
 
 namespace CoursesApi.IntegrationTests.CoursesResource.Fixtures;
 
-public class CoursesSeededResourceFixture : IAsyncLifetime
+public class CourseOfferingsFixture : IAsyncLifetime
 {
 
     private readonly string SQL_IMAGE = "jeffrygonzalez/sdt-nov-2022-sql:20221115192103_Initial-seeded";
 
 
     public IAlbaHost AlbaHost = null!;
+    public WireMockServer MockServer = null!;
     private readonly TestcontainerDatabase _sqlContainer;
 
-    public CoursesSeededResourceFixture()
+    public CourseOfferingsFixture()
     {
         _sqlContainer = new TestcontainersBuilder<MsSqlTestcontainer>()
-            .WithDatabase(new MsSqlTestcontainerConfiguration
-            {
-                Database = "courses-dev",
-                Password = "TokyoJoe138!"
-            }).WithImage(SQL_IMAGE).Build();
+    .WithDatabase(new MsSqlTestcontainerConfiguration
+    {
+        Database = "courses-dev",
+        Password = "TokyoJoe138!"
+    }).WithImage(SQL_IMAGE).Build();
     }
     public async Task InitializeAsync()
     {
         await _sqlContainer.StartAsync();
+        MockServer = WireMockServer.Start();
         AlbaHost = await Alba.AlbaHost.For<global::Program>(builder =>
         {
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddInMemoryCollection(new KeyValuePair<string, string>[] {
+                    new("courses-api", MockServer.Urls[0])
+
+                });
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Replace the datacontext with one that points to another 
@@ -56,11 +70,12 @@ public class CoursesSeededResourceFixture : IAsyncLifetime
 
             });
         });
+
     }
     public async Task DisposeAsync()
     {
         await _sqlContainer.StopAsync();
+        MockServer.Stop();
         await AlbaHost.DisposeAsync();
     }
-
 }
