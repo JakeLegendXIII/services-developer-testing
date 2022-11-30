@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
+
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using MiscApi.Adapters;
 using MiscApi.Controllers;
+
+using Moq;
 
 namespace MiscApi.IntegrationTests;
 
-public class InfoResourceTests : IClassFixture<MiscApiBasicFixture>
+public class InfoResourceTests : IClassFixture<InfoResourceTest>
 {
+
     public readonly HttpClient _client;
 
-    public InfoResourceTests(MiscApiBasicFixture fixture)
+    public InfoResourceTests(InfoResourceTest fixture)
     {
         _client = fixture.CreateClient();
     }
@@ -25,13 +28,25 @@ public class InfoResourceTests : IClassFixture<MiscApiBasicFixture>
         var response = await _client.GetAsync("/server-info");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("application/json", response.Content?.Headers?.ContentType?.MediaType);
+        Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
 
-        var serviceInfo = await response.Content.ReadFromJsonAsync<ServerInfo>();
+        var serverInfo = await response.Content.ReadFromJsonAsync<ServerInfo>();
 
-        Assert.NotNull(serviceInfo);
-
+        Assert.NotNull(serverInfo);
         var expectedDate = new DateTime(1969, 4, 20, 23, 59, 00);
-        Assert.Equal(expectedDate, serviceInfo.LastChecked);
+        Assert.Equal(expectedDate, serverInfo.LastChecked);
+    }
+}
+
+// Fixtures are the "Context" - a part of the "Given"
+
+public class InfoResourceTest : ApiBasicFixtureBase<Program>
+{
+    protected override void SetupServices(IServiceCollection services)
+    {
+        var stubbedClock = new Mock<ISystemTime>();
+        stubbedClock.Setup(c => c.GetCurrent()).Returns(new DateTime(1969, 4, 20, 23, 59, 00));
+        services.AddSingleton<ISystemTime>(stubbedClock.Object);
+
     }
 }

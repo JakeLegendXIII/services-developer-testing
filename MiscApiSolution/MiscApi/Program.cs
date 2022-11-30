@@ -12,6 +12,7 @@ public class Program
 
         // Lazy version
         builder.Services.AddSingleton<ISystemTime, SystemTime>();
+        builder.Services.AddScoped<IProvideLogging, LoggingAdapter>();
 
         // Lazy, but with a factory
         //builder.Services.AddSingleton<ISystemTime>(f =>
